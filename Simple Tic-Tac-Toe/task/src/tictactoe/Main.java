@@ -39,30 +39,29 @@ public class Main {
         private void gameMoves() {
             var scanner = new Scanner(System.in);
 
-            int f = 1;
-            int xS = 0;
-            int oS = 0;
+            int turn = 1;
+            int xPlayer = 0;
+            int oPlayer = 0;
 
             while (true) {
                 try {
-
                     int x = scanner.nextInt() - 1;
                     int y = scanner.nextInt() - 1;
 
                     if (gameGrid[x][y].equals("X") || gameGrid[x][y].equals("O")) {
                         System.out.println("This cell is occupied! Choose another one!");
                     } else {
-                        if (f % 2 == 0) {
+                        if (turn % 2 == 0) {
                             gameGrid[x][y] = "O";
-                            oS += 1;
+                            oPlayer++;
                         } else {
                             gameGrid[x][y] = "X";
-                            xS += 1;
+                            xPlayer++;
                         }
                         printGrid();
-                        f++;
+                        turn++;
                         if (winsXorO()) break;
-                        else if (xS + oS == 9) {
+                        else if (xPlayer + oPlayer == 9) {
                             System.out.println("Draw");
                             break;
                         }
@@ -73,6 +72,7 @@ public class Main {
                     System.out.println("Coordinates should be from 1 to 3!");
                 }
             }
+            scanner.close();
         }
 
         private boolean winsXorO() {
@@ -80,15 +80,15 @@ public class Main {
             String[] row2 = new String[]{gameGrid[1][0], gameGrid[1][1], gameGrid[1][2]};
             String[] row3 = new String[]{gameGrid[2][0], gameGrid[2][1], gameGrid[2][2]};
 
-            boolean rowX = Arrays.stream(row1)
-                    .allMatch(s -> s.equals("X")) || Arrays.stream(row2)
-                    .allMatch(s -> s.equals("X")) || Arrays.stream(row3)
-                    .allMatch(s -> s.equals("X"));
+            boolean rowX = Arrays.stream(row1).allMatch(s -> s.equals("X")) 
+                    || Arrays.stream(row2).allMatch(s -> s.equals("X")) 
+                    || Arrays.stream(row3).allMatch(s -> s.equals("X"));
 
-            boolean rowO = Arrays.stream(row1)
-                    .allMatch(s -> s.equals("O")) || Arrays.stream(row2)
-                    .allMatch(s -> s.equals("O")) || Arrays.stream(row3)
-                    .allMatch(s -> s.equals("O"));
+            boolean rowO = row[1].equals("O") 
+                    && (isWin(row1[0], row1[1], row1[2]) 
+                        || isWin(row2[0], row2[1], row2[2]) 
+                        || isWin(row3[0], row3[1], row3[2])
+                    );
 
             String[] column1 = new String[]{gameGrid[0][0], gameGrid[1][0], gameGrid[2][0]};
             String[] column2 = new String[]{gameGrid[0][1], gameGrid[1][1], gameGrid[2][1]};
@@ -123,6 +123,10 @@ public class Main {
                 return true;
             }
             return false;
+        }
+
+        private boolean isWin(String x, String y, String z) {
+            return x.equals(y) && y.equals(z);
         }
     }
 }
